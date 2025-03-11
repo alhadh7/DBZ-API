@@ -134,12 +134,7 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 
-ALLOWED_HOSTS = [
-    'localhost',  # Include any other trusted domains
-    'https://*.ngrok-free.app',  # Wildcard for ngrok-free.app
-    '127.0.0.1',
-    '.ngrok-free.app'
-]
+ALLOWED_HOSTS = ['*']
 
 
 import re
