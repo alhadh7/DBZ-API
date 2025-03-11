@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Restaurant Profile{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="my-4">Restaurant Profile</h2>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Update Your Restaurant Information</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="name" class="form-label">Restaurant Name</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ restaurant.name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label">Restaurant Address</label>
+                    <textarea class="form-control" id="address" name="address" rows="3" required>{{ restaurant.address }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Restaurant Phone</label>
+                    <input type="text" class="form-control" id="phone" name="phone" value="{{ restaurant.phone }}" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,481 @@
+{
+    "info": {
+      "name": "Food Delivery API",
+      "description": "API collection for a food delivery application built with Django REST Framework",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "User Management",
+        "description": "Authentication and user management endpoints",
+        "item": [
+          {
+            "name": "User Signup",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/users/signup/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "users", "signup", ""]
+              },
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"email\": \"user@example.com\",\n    \"username\": \"testuser\",\n    \"password\": \"securepassword123\"\n}"
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "User Login",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/users/login/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "users", "login", ""]
+              },
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"securepassword123\"\n}"
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "User Logout",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Token {{auth_token}}"
+                },
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/users/logout/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "users", "logout", ""]
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "Products",
+        "description": "Endpoints for managing products",
+        "item": [
+          {
+            "name": "Product List",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/products/?category=1&search=burger",
+                "host": ["{{base_url}}"],
+                "path": ["api", "products", ""],
+                "query": [
+                  {
+                    "key": "category",
+                    "value": "1",
+                    "description": "Filter by category ID (optional)"
+                  },
+                  {
+                    "key": "search",
+                    "value": "burger",
+                    "description": "Search by name or description (optional)"
+                  }
+                ]
+              }
+            },
+            "response": []
+          },
+
+          
+          {
+            "name": "Restaurant Products",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/restaurants/1/products/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "restaurants", "1", "products", ""],
+                "variable": [
+                  {
+                    "key": "restaurant_id",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Category List",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/categories/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "categories", ""]
+              }
+            },
+            "response": []
+          },
+
+          {
+            "name": "Restaurant List",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/restaurant/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "restaurant", ""]
+              }
+            },
+            "response": []
+          }
+
+        ]
+      },
+      {
+        "name": "Cart",
+        "description": "Shopping cart operations",
+        "item": [
+          {
+            "name": "Get Cart",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Token {{auth_token}}"
+                },
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/cart/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "cart", ""]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Add to Cart",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Token {{auth_token}}"
+                },
+                {
+                  "key": "Content-Type", 
+                  "value": "application/json"
+                },
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/cart/add/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "cart", "add", ""]
+              },
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"product_id\": 1,\n    \"quantity\": 2\n}"
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Update Cart Item",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Token {{auth_token}}"
+                },
+                {
+                  "key": "Content-Type", 
+                  "value": "application/json"
+                },
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/cart/update/1/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "cart", "update", "1", ""],
+                "variable": [
+                  {
+                    "key": "item_id",
+                    "value": "1"
+                  }
+                ]
+              },
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"quantity\": 3\n}"
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Remove from Cart",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Token {{auth_token}}"
+                },
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/cart/remove/1/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "cart", "remove", "1", ""],
+                "variable": [
+                  {
+                    "key": "item_id",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "Orders",
+        "description": "Order processing and retrieval",
+        "item": [
+          {
+            "name": "Checkout",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Token {{auth_token}}"
+                },
+                {
+                  "key": "Content-Type", 
+                  "value": "application/json"
+                },
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/checkout/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "checkout", ""]
+              },
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"address\": \"123 Main St, Apt 4B, New York, NY 10001\",\n    \"phone\": \"+12125551234\",\n    \"latitude\": null,\n    \"longitude\": null\n}"
+
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Order List",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Token {{auth_token}}"
+                },
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/orders/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "orders", ""]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Order Detail",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Token {{auth_token}}"
+                },
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/orders/1/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "orders", "1", ""],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "1"
+                  }
+                ]
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "Delivery Management",
+        "description": "Endpoints for delivery personnel",
+        "item": [
+          {
+            "name": "Update Order Status",
+            "request": {
+              "method": "PATCH",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Token {{auth_token}}"
+                },
+                {
+                  "key": "Content-Type", 
+                  "value": "application/json"
+                },
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/orders/1/update_status_d/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "orders", "1", "update_status_d"],
+                "variable": [
+                  {
+                    "key": "order_id",
+                    "value": "1"
+                  }
+                ]
+              },
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"status\": \"delivered\"\n}"
+              },
+              "description": "Update order status by delivery personnel. This endpoint requires the user to be authenticated as a delivery boy and assigned to the order."
+            },
+            "response": []
+          },
+          {
+            "name": "Get Orders Assigned to Delivery Boy",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Token {{auth_token}}"
+                },
+                {
+                  "key": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/api/orders/assigned/",
+                "host": ["{{base_url}}"],
+                "path": ["api", "orders", "assigned"]
+              },
+              "description": "Get all orders assigned to the authenticated delivery boy. This endpoint requires the user to be authenticated as a delivery boy."
+            },
+            "response": []
+          }
+        ]
+      }
+      
+    ],
+    "auth": {
+      "type": "noauth"
+    },
+    "event": [],
+    "variable": [
+      {
+        "key": "base_url",
+        "value": "http://localhost:8000",
+        "type": "string"
+      },
+      {
+        "key": "auth_token",
+        "value": "your_auth_token_here",
+        "type": "string"
+      }
+    ]
+  }

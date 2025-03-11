@@ -1,0 +1,180 @@
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Status</th>
+            <th>Total Amount</th>
+            <th>Created At</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.user.get_full_name }}<br>{{ order.user.email }}</td>
+                <td>
+                    <span class="badge
+                        {% if order.status == 'pending' %} bg-warning {% endif %}
+                        {% if order.status == 'preparing' %} bg-info {% endif %}
+                        {% if order.status == 'out_for_delivery' %} bg-primary {% endif %}
+                        {% if order.status == 'delivered' %} bg-success {% endif %}
+                    ">
+                        {{ order.get_status_display }}
+                    </span>
+                </td>
+                <td>${{ order.total_amount }}</td>
+                <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+                <td>
+                    <!-- View Details Button -->
+                    <button type="button" class="btn btn-primary btn-view-order" data-order-id="{{ order.order_id }}" data-bs-toggle="modal" data-bs-target="#orderDetailsModal">
+                        View Details
+                    </button>
+
+                    <!-- Dropdown for changing status -->
+                    <div class="mt-2">
+                        <form action="{% url 'update-order-status' order.order_id %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <select name="status" class="form-select" required>
+                                <option value="pending" {% if order.status == 'pending' %} selected {% endif %}>Pending</option>
+                                <option value="preparing" {% if order.status == 'preparing' %} selected {% endif %}>Preparing</option>
+                                <option value="out_for_delivery" {% if order.status == 'out_for_delivery' %} selected {% endif %}>Out for Delivery</option>
+                            </select>
+                            <button type="submit" class="btn btn-success mt-2" style="width:100%; margin-top: 5px;">Confirm Change</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No orders found.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="orderDetailsContent">
+                Loading...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle showing order details in modal
+    const orderDetailsModal = document.getElementById('orderDetailsModal');
+    const orderDetailsContent = document.getElementById('orderDetailsContent');
+
+    document.querySelectorAll('.btn-view-order').forEach(button => {
+        button.addEventListener('click', function() {
+            const orderId = this.dataset.orderId;
+            
+            // Fetch the order details from the server
+            fetch(`/orders/${orderId}/details/`)
+                .then(response => response.json())
+                .then(data => {
+                    // Construct the order details HTML
+                    let itemsHtml = '';
+                    data.order_items.forEach(item => {
+                        itemsHtml += `
+                            <tr>
+                                <td>${item.product_name}</td>
+                                <td>${item.quantity}</td>
+                                <td>${item.price}</td>
+                                <td>${item.total_price}</td>
+                            </tr>
+                        `;
+                    });
+
+                    // Set the order details into the modal
+                    orderDetailsContent.innerHTML = `
+                        <table class="table">
+                            <tr><th>Order ID</th><td>${data.order_id}</td></tr>
+                            <tr><th>Status</th><td>${data.status}</td></tr>
+                            <tr><th>Total Amount</th><td>${data.total_amount}</td></tr>
+                            <tr><th>Address</th><td>${data.address}</td></tr>
+                            <tr><th>Phone</th><td>${data.phone}</td></tr>
+                            <tr><th>Created At</th><td>${data.created_at}</td></tr>
+                        </table>
+                        <h5>Items</h5>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsHtml}
+                            </tbody>
+                        </table>
+                    `;
+                })
+                .catch(error => {
+                    orderDetailsContent.innerHTML = `<div class="alert alert-danger">Error loading order details: ${error}</div>`;
+                });
+        });
+    });
+
+    // Handle status change with AJAX
+    document.querySelectorAll('.status-dropdown').forEach(select => {
+        select.addEventListener('change', function() {
+            const orderId = this.dataset.orderId;
+            const newStatus = this.value;
+
+            // Send the updated status to the server via AJAX
+            fetch(`/orders/${orderId}/update-status/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    status: newStatus
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the badge color based on the new status
+                    const badge = this.closest('tr').querySelector('.badge');
+                    badge.classList.remove('bg-warning', 'bg-info', 'bg-primary', 'bg-success');
+                    
+                    if (newStatus === 'pending') {
+                        badge.classList.add('bg-warning');
+                    } else if (newStatus === 'preparing') {
+                        badge.classList.add('bg-info');
+                    } else if (newStatus === 'out_for_delivery') {
+                        badge.classList.add('bg-primary');
+                    }
+                    badge.textContent = data.new_status_display;  // Display the new status name
+                }
+            })
+            .catch(error => {
+                console.error('Error updating status:', error);
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
+
+

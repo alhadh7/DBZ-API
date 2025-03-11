@@ -1,0 +1,25 @@
+# Python
+# *.pyc
+# __pycache__/
+# *.pyo
+# *.pyd
+
+# Virtual environment
+venv/
+.env
+
+# Database
+# db.sqlite3
+
+# Media files
+# media/
+
+# Static files
+# staticfiles/
+
+# Other
+*.log
+*.pot
+*.pyc
+*.egg-info/
+*.egg

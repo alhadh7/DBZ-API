@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block title %}Orders{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="my-4">Order Management</h2>
+    
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#all" data-bs-toggle="tab">All Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#pending" data-bs-toggle="tab">Pending</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#preparing" data-bs-toggle="tab">Preparing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#out-for-delivery" data-bs-toggle="tab">Out for Delivery</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#delivered" data-bs-toggle="tab">Delivered</a>
+                </li>
+        
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="all">
+                    {% include "orders_table.html" with orders=orders %}
+                </div>
+                <div class="tab-pane fade" id="pending">
+                    {% include "orders_table.html" with orders=orders|filter_by_status:'pending' %}
+                </div>
+                <div class="tab-pane fade" id="preparing">
+                    {% include "orders_table.html" with orders=orders|filter_by_status:'preparing' %}
+                </div>
+                <div class="tab-pane fade" id="out-for-delivery">
+                    {% include "orders_table.html" with orders=orders|filter_by_status:'out_for_delivery' %}
+                </div>
+                <div class="tab-pane fade" id="delivered">
+                    {% include "orders_table.html" with orders=orders|filter_by_status:'delivered' %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="orderDetailsContent">
+                Loading...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle showing order details in modal
+    const orderDetailsModal = document.getElementById('orderDetailsModal');
+    const orderDetailsContent = document.getElementById('orderDetailsContent');
+    
+    document.querySelectorAll('.btn-view-order').forEach(button => {
+        button.addEventListener('click', function() {
+            const orderId = this.dataset.orderId;
+            fetch(`/restaurant/orders/${orderId}/details/`)
+                .then(response => response.text())
+                .then(data => {
+                    orderDetailsContent.innerHTML = data;
+                })
+                .catch(error => {
+                    orderDetailsContent.innerHTML = `<div class="alert alert-danger">Error loading order details: ${error}</div>`;
+                });
+        });
+    });
+});
+</script>
+{% endblock %}
